@@ -189,7 +189,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock', 'slider_dock']:
+        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
             if self._config[dock]['closable']:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]['floatable']:
