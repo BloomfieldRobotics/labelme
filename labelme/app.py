@@ -139,6 +139,28 @@ class MainWindow(QtWidgets.QMainWindow):
         fileListWidget.setLayout(fileListLayout)
         self.file_dock.setWidget(fileListWidget)
 
+        ####
+        # Setup edge detection button
+        self.edgeButton = QtWidgets.QPushButton('Detect')
+        self.edgeButton.clicked.connect(self.edgeDetect)
+
+        # Setup gamma slider
+        self.gammaSlider = QtWidgets.QSlider(Qt.Horizontal)
+        self.gammaSlider.sliderReleased.connect(self.gammaCorrect)
+
+        # Setup slider layout
+        sliderLayout = QtWidgets.QHBoxLayout()
+        sliderLayout.setContentsMargins(0, 0, 0, 0)
+        sliderLayout.setSpacing(3)
+        sliderLayout.addWidget(self.edgeButton)
+        sliderLayout.addWidget(self.gammaSlider)
+        self.slider_dock = QtWidgets.QDockWidget(u'Slider Stuff', self)
+        self.slider_dock.setObjectName(u'Slider')
+        sliderWidget = QtWidgets.QWidget()
+        sliderWidget.setLayout(sliderLayout)
+        self.slider_dock.setWidget(sliderWidget)
+        ####
+
         self.zoomWidget = ZoomWidget()
         self.colorDialog = ColorDialog(parent=self)
 
@@ -164,7 +186,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
+        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock', 'slider_dock']:
             if self._config[dock]['closable']:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]['floatable']:
@@ -179,6 +201,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.slider_dock)
 
         # Actions
         action = functools.partial(utils.newAction, self)
