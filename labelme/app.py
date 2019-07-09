@@ -3,6 +3,8 @@ import os
 import os.path as osp
 import re
 import webbrowser
+from os.path import dirname, basename, isfile, join
+import glob
 
 from qtpy import QtCore
 from qtpy.QtCore import Qt
@@ -13,7 +15,7 @@ from labelme import __appname__
 from labelme import PY2
 from labelme import QT5
 
-from . import utils
+import utils
 from labelme.config import get_config
 from labelme.label_file import LabelFile
 from labelme.label_file import LabelFileError
@@ -140,6 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setWidget(fileListWidget)
 
         ####
+        # Author Ammar Updated 7/9/2019
         # Setup edge detection button
         self.edgeButton = QtWidgets.QPushButton('Detect')
         self.edgeButton.clicked.connect(self.edgeDetect)
@@ -1678,11 +1681,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def edgeDetect(self):
 
-        try:
-            img = cv.imread(self.filename)
-        else:
-            #dialouge warning box!!
-            return
+
+        img = cv.imread(self.filename)
 
         edges = cv.Canny(img,100,200)
 
@@ -1702,11 +1702,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def gammaCorrect(self, gamma):
 
-        try:
-            img = cv.imread(self.filename)
-        else:
-            #dialouge warning box!!
-            return
+
+        img = cv.imread(self.filename)
+
 
         # build a lookup table mapping the pixel values [0, 255] to
         # their adjusted gamma values
