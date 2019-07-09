@@ -29,6 +29,8 @@ from labelme.widgets import LabelQListWidget
 from labelme.widgets import ToolBar
 from labelme.widgets import ZoomWidget
 
+import cv2 as cv
+
 
 # FIXME
 # - [medium] Set max zoom value to something big enough for FitWidth/Window
@@ -1650,3 +1652,54 @@ class MainWindow(QtWidgets.QMainWindow):
                     images.append(relativePath)
         images.sort(key=lambda x: x.lower())
         return images
+
+    def edgeDetect(self):
+
+        try:
+            img = cv.imread(self.filename)
+        else:
+            #dialouge warning box!!
+            return
+
+        edges = cv.Canny(img,100,200)
+
+        if(len(img.shape)==3):
+            for c in range(img.shape[-1]):
+                img[:,:,c] += edges
+
+        path = self.filename.split('/')
+        path = os.path.join('/',path.split('/')[0:-1])
+        temp_path = os.path.join(path,"gamma_temp.png")
+        cv.imwrite(img,temp_path)
+        self.loadFile(temp_path)
+
+        # height, width, channel = img.shape
+        # bytesPerLine = 3 * width
+        # qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
+
+    def gammaCorrect(self, gamma):
+
+        try:
+            img = cv.imread(self.filename)
+        else:
+            #dialouge warning box!!
+            return
+
+        # build a lookup table mapping the pixel values [0, 255] to
+        # their adjusted gamma values
+        invGamma = 1.0 / gamma
+        table = np.array([((i / 255.0) ** invGamma) * 255
+            for i in np.arange(0, 256)]).astype("uint8")
+ 
+        # apply gamma correction using the lookup table
+        img_adjusted = cv2.LUT(image, table)
+
+        path = self.filename.split('/')
+        path = os.path.join('/',path.split('/')[0:-1])
+        temp_path = os.path.join(path,"gamma_temp.png")
+        cv.imwrite(img_adjusted,temp_path)
+        self.loadFile(temp_path)
+
+        # height, width, channel = img_adjusted.shape
+        # bytesPerLine = 3 * width
+        # qImg = QImage(img_adjusted.data, width, height, bytesPerLine, QImage.Format_RGB888)
