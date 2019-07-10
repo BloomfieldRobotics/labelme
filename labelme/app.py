@@ -31,7 +31,11 @@ from labelme.widgets import LabelQListWidget
 from labelme.widgets import ToolBar
 from labelme.widgets import ZoomWidget
 
+#####
+# labelme Bloomfield imports
 import cv2 as cv
+import numpy as np
+#####
 
 
 # FIXME
@@ -150,6 +154,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Setup gamma slider
         self.gammaSlider = QtWidgets.QSlider(Qt.Horizontal)
         self.gammaSlider.sliderReleased.connect(self.gammaCorrect)
+        ####
 
         # Setup slider layout
         sliderLayout = QtWidgets.QHBoxLayout()
@@ -645,6 +650,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.firstStart = True
         # if self.firstStart:
         #    QWhatsThis.enterWhatsThisMode()
+
+        #######
+        # Labelme Bloomfield Robotics
+        # Author Nathaniel Todd
+        # Updated 7/10/2019
+        self.edgeState = False
+        self.gammaState = False
+        self.temp_filename = self.filename
+        #######
 
     def menu(self, title, actions=None):
         menu = self.menuBar().addMenu(title)
@@ -1679,33 +1693,39 @@ class MainWindow(QtWidgets.QMainWindow):
         images.sort(key=lambda x: x.lower())
         return images
 
+    #######
+    # Labelme Bloomfield Robotics
+    # Author Nathaniel Todd
+    # Updated 7/10/2019
     def edgeDetect(self):
 
+        self._config['keep_prev'] = True
+        if(self.edgeState):
+            self.loadFile(self.filename)
 
-        img = cv.imread(self.filename)
+        else:
+            self.edgeState = not self.edgeState
+            self.temp_filename = self.filename
 
-        edges = cv.Canny(img,100,200)
+            img = cv.imread(self.filename, cv.IMREAD_COLOR)
 
-        if(len(img.shape)==3):
-            for c in range(img.shape[-1]):
-                img[:,:,c] += edges
+            edges = cv.cvtColor(cv.Canny(img, 15, 30), cv.COLOR_GRAY2RGB)
+            out = cv.addWeighted(img,0.5,edges,0.5,0)
 
-        path = self.filename.split('/')
-        path = os.path.join('/',path.split('/')[0:-1])
-        temp_path = os.path.join(path,"gamma_temp.png")
-        cv.imwrite(img,temp_path)
-        self.loadFile(temp_path)
-
-        # height, width, channel = img.shape
-        # bytesPerLine = 3 * width
-        # qImg = QImage(img.data, width, height, bytesPerLine, QImage.Format_RGB888)
-
-    def gammaCorrect(self, gamma):
+            temp_path = os.path.join('/',*self.filename.split('/')[0:-1],"edge_temp.png")
+            cv.imwrite(temp_path, out)
+            self.loadFile(temp_path)
+            self.filename = self.temp_filename
+            self.temp_filename = temp_path
 
 
-        img = cv.imread(self.filename)
+    def gammaCorrect(self):
 
-
+        self._config['keep_prev'] = True
+        img = cv.imread(self.filename, cv.IMREAD_COLOR)
+        gamma = self.gammaSlider.value()
+        print(gamma, type(gamma))
+        
         # build a lookup table mapping the pixel values [0, 255] to
         # their adjusted gamma values
         invGamma = 1.0 / gamma
@@ -1713,14 +1733,12 @@ class MainWindow(QtWidgets.QMainWindow):
             for i in np.arange(0, 256)]).astype("uint8")
  
         # apply gamma correction using the lookup table
-        img_adjusted = cv2.LUT(image, table)
+        img_adjusted = cv.LUT(img, table)
 
-        path = self.filename.split('/')
-        path = os.path.join('/',path.split('/')[0:-1])
-        temp_path = os.path.join(path,"gamma_temp.png")
-        cv.imwrite(img_adjusted,temp_path)
+        temp_path = os.path.join('/',*self.filename.split('/')[0:-1],"gamma_temp.png")
+
+        cv.imwrite(temp_path, img_adjusted)
         self.loadFile(temp_path)
-
-        # height, width, channel = img_adjusted.shape
-        # bytesPerLine = 3 * width
-        # qImg = QImage(img_adjusted.data, width, height, bytesPerLine, QImage.Format_RGB888)
+        self.filename = self.temp_filename
+        self.temp_path = temp_path
+    #######
