@@ -1705,20 +1705,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._config['keep_prev'] = True
         if(self.edgeState):
+            print("Turning off Edges")
+            self.edgeState = not self.edgeState
             self.loadFile(self.filename)
 
         else:
+            print("Detecting Edges")
             self.edgeState = not self.edgeState
             self.temp_filename = self.filename
 
             img = cv.imread(self.filename, cv.IMREAD_COLOR)
 
-            edges = cv.cvtColor(cv.Canny(img, 20, 30), cv.COLOR_GRAY2RGB)
+            # edge detection parameters
+            edges = cv.cvtColor(cv.Canny(img, 25, 35), cv.COLOR_GRAY2RGB)
             out = cv.addWeighted(img,1,edges,1,0)
 
             temp_path = os.path.join('/',*self.filename.split('/')[0:-1],"edge_temp.png")
             cv.imwrite(temp_path, out)
             self.loadFile(temp_path)
+
             self.filename = self.temp_filename
             self.temp_filename = temp_path
 
@@ -1726,14 +1731,20 @@ class MainWindow(QtWidgets.QMainWindow):
     def gammaCorrect(self):
 
         self._config['keep_prev'] = True
+        self.temp_filename = self.filename
+        if(self.edgeState):
+            print("Turning off Edges before Gamm Correcting")
+            self.edgeState = not self.edgeState
+
+
+        print("Gamma Correcting")
+
         img = cv.imread(self.filename, cv.IMREAD_COLOR)
         gamma = self.gammaSlider.value() / 10.0 # floating value range 0.1-5.0
 
         # Avoid divide-by-zero
         gamma = 0.1 if not gamma else gamma
-
-        print(gamma, type(gamma))
-        
+     
         # build a lookup table mapping the pixel values [0, 255] to
         # their adjusted gamma values
         invGamma = 1.0 / gamma
@@ -1747,6 +1758,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         cv.imwrite(temp_path, img_adjusted)
         self.loadFile(temp_path)
+
         self.filename = self.temp_filename
         self.temp_path = temp_path
     #######
