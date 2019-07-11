@@ -15,6 +15,8 @@ from labelme.config import get_config
 from labelme.logger import logger
 from labelme.utils import newIcon
 
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(

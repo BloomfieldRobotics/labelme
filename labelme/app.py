@@ -1693,7 +1693,7 @@ class MainWindow(QtWidgets.QMainWindow):
         images.sort(key=lambda x: x.lower())
         return images
 
-    #######
+    #############################################################################
     # Labelme Bloomfield Robotics
     # Author Nathaniel Todd
     # Updated 7/10/2019
@@ -1709,8 +1709,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
             img = cv.imread(self.filename, cv.IMREAD_COLOR)
 
-            edges = cv.cvtColor(cv.Canny(img, 15, 30), cv.COLOR_GRAY2RGB)
-            out = cv.addWeighted(img,0.5,edges,0.5,0)
+            edges = cv.cvtColor(cv.Canny(img, 20, 30), cv.COLOR_GRAY2RGB)
+            out = cv.addWeighted(img,1,edges,1,0)
 
             temp_path = os.path.join('/',*self.filename.split('/')[0:-1],"edge_temp.png")
             cv.imwrite(temp_path, out)
@@ -1741,4 +1741,4 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loadFile(temp_path)
         self.filename = self.temp_filename
         self.temp_path = temp_path
-    #######
+    ######################################################################
