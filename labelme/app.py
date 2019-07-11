@@ -146,19 +146,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setWidget(fileListWidget)
 
         ####
-        # Author Ammar Updated 7/9/2019
+        # Author Ammar Updated 7/11/2019
         # Setup edge detection button
         self.edgeButton = QtWidgets.QPushButton('Detect')
         self.edgeButton.clicked.connect(self.edgeDetect)
 
         # Setup gamma slider
         self.gammaSlider = QtWidgets.QSlider(Qt.Horizontal)
+        self.gammaSlider.setMinimum(0)
+        self.gammaSlider.setMaximum(50)
+        self.gammaSlider.setValue(10)
+        self.gammaSlider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.gammaSlider.setTickInterval(10)
         self.gammaSlider.sliderReleased.connect(self.gammaCorrect)
-        ####
 
         # Setup slider layout
         sliderLayout = QtWidgets.QHBoxLayout()
-        sliderLayout.setContentsMargins(0, 0, 0, 0)
+        sliderLayout.setContentsMargins(3, 3, 3, 3)
         sliderLayout.setSpacing(3)
         sliderLayout.addWidget(self.edgeButton)
         sliderLayout.addWidget(self.gammaSlider)
@@ -1723,7 +1727,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._config['keep_prev'] = True
         img = cv.imread(self.filename, cv.IMREAD_COLOR)
-        gamma = self.gammaSlider.value()
+j       gamma = self.gammaSlider.value() / 10.0 # floating value range 0.1-5.0
+
+        # Avoid divide-by-zero
+        gamma = 0.1 if not gamma else gamma
+
         print(gamma, type(gamma))
         
         # build a lookup table mapping the pixel values [0, 255] to
