@@ -661,7 +661,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Updated 7/10/2019
         self.edgeState = False
         self.gammaState = False
-        self.temp_filename = self.filename
+        self.swap_filename = self.filename
+        self.disp_filename = self.filename
         #######
 
     def menu(self, title, actions=None):
@@ -1701,18 +1702,35 @@ class MainWindow(QtWidgets.QMainWindow):
     # Labelme Bloomfield Robotics
     # Author Nathaniel Todd
     # Updated 7/10/2019
+    def _dispImg(self, path):
+
+        #load original file into swap
+        self.swap_filename = self.filename
+
+        #keep current labels
+        self._config['keep_prev'] = True
+
+        #display new file
+        #in the process overwriting self.filename
+        self.loadFile(path)       
+
+        #Store filename of display image
+        self.disp_filename = self.filename
+        #load original filename from swap
+        self.filename = self.swap_filename
+        #clear swap filename
+        self.swap_filename = None
+
     def edgeDetect(self):
 
-        self._config['keep_prev'] = True
         if(self.edgeState):
             print("Turning off Edges")
             self.edgeState = not self.edgeState
-            self.loadFile(self.filename)
+            self.loadOriginal()
 
         else:
             print("Detecting Edges")
             self.edgeState = not self.edgeState
-            self.temp_filename = self.filename
 
             img = cv.imread(self.filename, cv.IMREAD_COLOR)
 
@@ -1722,22 +1740,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
             temp_path = os.path.join('/',*self.filename.split('/')[0:-1],"edge_temp.png")
             cv.imwrite(temp_path, out)
-            self.loadFile(temp_path)
 
-            self.filename = self.temp_filename
-            self.temp_filename = temp_path
-
+            self._dispImg(temp_path)
 
     def gammaCorrect(self):
 
-        self._config['keep_prev'] = True
-        self.temp_filename = self.filename
         if(self.edgeState):
             print("Turning off Edges before Gamm Correcting")
             self.edgeState = not self.edgeState
 
-
-        print("Gamma Correcting")
+        print("Gamma Correction Running")
 
         img = cv.imread(self.filename, cv.IMREAD_COLOR)
         gamma = self.gammaSlider.value() / 10.0 # floating value range 0.1-5.0
@@ -1755,10 +1767,10 @@ class MainWindow(QtWidgets.QMainWindow):
         img_adjusted = cv.LUT(img, table)
 
         temp_path = os.path.join('/',*self.filename.split('/')[0:-1],"gamma_temp.png")
-
         cv.imwrite(temp_path, img_adjusted)
+        
         self.loadFile(temp_path)
 
-        self.filename = self.temp_filename
-        self.temp_path = temp_path
+    def loadOriginal(self):
+        self._dispImg(self.filename)        
     #######
