@@ -166,11 +166,40 @@ class MainWindow(QtWidgets.QMainWindow):
         sliderLayout.setSpacing(3)
         sliderLayout.addWidget(self.edgeButton)
         sliderLayout.addWidget(self.gammaSlider)
-        self.slider_dock = QtWidgets.QDockWidget(u'Slider Stuff', self)
-        self.slider_dock.setObjectName(u'Slider')
         sliderWidget = QtWidgets.QWidget()
         sliderWidget.setLayout(sliderLayout)
-        self.slider_dock.setWidget(sliderWidget)
+
+        # Setup clear button
+        self.clearButton = QtWidgets.QPushButton('Clear')
+        self.clearButton.clicked.connect(self.loadOriginal)
+
+        # Setup checkbox layout
+        self.holdCheckbox = QtWidgets.QCheckBox('Hold')
+        hspacer = QtWidgets.QSpacerItem(40, 20,
+                QtWidgets.QSizePolicy.Expanding,
+                QtWidgets.QSizePolicy.Minimum)
+        checkboxLayout = QtWidgets.QHBoxLayout()
+        checkboxLayout.setContentsMargins(3, 3, 3, 3)
+        checkboxLayout.setSpacing(3)
+        checkboxLayout.addWidget(self.clearButton)
+        checkboxLayout.addWidget(self.holdCheckbox)
+        checkboxLayout.addItem(hspacer)
+        checkboxWidget = QtWidgets.QWidget()
+        checkboxWidget.setLayout(checkboxLayout)
+
+        # Setup Bloomfield main layout
+        bloomLayout = QtWidgets.QVBoxLayout()
+        bloomLayout.setContentsMargins(3, 3, 3, 3)
+        bloomLayout.setSpacing(3)
+        bloomLayout.addWidget(sliderWidget)
+        bloomLayout.addWidget(checkboxWidget)
+
+        # Setup Bloomfield dock widget
+        self.bloom_dock = QtWidgets.QDockWidget(u'Bloomfield', self)
+        self.bloom_dock.setObjectName(u'Bloomfield')
+        bloomWidget = QtWidgets.QWidget()
+        bloomWidget.setLayout(bloomLayout)
+        self.bloom_dock.setWidget(bloomWidget)
         ####
 
         self.zoomWidget = ZoomWidget()
@@ -213,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.slider_dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.bloom_dock)
 
         # Actions
         action = functools.partial(utils.newAction, self)
