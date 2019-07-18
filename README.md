@@ -9,7 +9,7 @@
 cd into root (master) directory\
 python labelme/main.py --nodata\
 \
-(--nodata does not excludes image data from .json, more details below)\
+(--nodata excludes image data from .json, more details below)\
 \
 **In label me:**\
 ctrl+r to draw a rectangle\
