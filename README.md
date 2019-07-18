@@ -15,7 +15,7 @@ python labelme/main.py --nodata\
 ctrl+r to draw a rectangle\
 File>save will save your progress thus far in a filename.json file make sure to save it in the same directory as the images.\
 Click edit polygon to duplicate bounding boxes or edit sizes\
-See \*Note below about bbox labels\
+See \*Note below about bbox labels
 
 ### Bloomfield Modifications:
 **Hold checkbox Checked** - holds all opencv modification. I.e. You can edge detect on top of gamma correction and vice versa.\
