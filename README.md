@@ -11,14 +11,14 @@ python labelme/main.py --nodata\
 \
 (--nodata does not excludes image data from .json, more details below)\
 \
-In label me:\
+**In label me:**\
 ctrl+r to draw a rectangle\
 File>save will save your progress thus far in a filename.json file make sure to save it in the same directory as the images.\
 Click edit polygon to duplicate bounding boxes or edit sizes\
 See \*Note below about bbox labels\
 
 ### Bloomfield Modifications:
-**Hold Checkbox Checked** - holds all opencv modification. I.e. You can edge detect on top of gamma correction and vice versa.\
+**Hold checkbox Checked** - holds all opencv modification. I.e. You can edge detect on top of gamma correction and vice versa.\
 **Hold checkbox unchecked** - unchecked will edge detect/gamma correct on original image and not stack the two.\
 **Edge detection** - The edge detection is very sensitive to gamma level so you'll need to adjust the thresholds in labelme/app.py - line 1768 (ctrl+f cv.Canny)\
 **TODO** - add textboxes in labelme QT gui for the thresholds ^^\
