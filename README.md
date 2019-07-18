@@ -1,3 +1,42 @@
+# Bloomfield Readme:
+
+## Labelme: 
+
+### Running and stuff:
+
+Major dependecies - pyQT5 and OpenCV 2
+Usage - 
+cd into root (master) directory
+python labelme/main.py --nodata
+
+(--nodata does not excludes image data from .json, more details below)
+
+In label me:
+ctrl+r to draw a rectangle
+File>save will save your progress thus far in a filename.json file make sure to save it in the same directory as the images.
+Click edit polygon to duplicate bounding boxes or edit sizes
+See \*Note below about bbox labels
+
+### Bloomfield Modifications:
+Hold Checkbox - holds all opencv modification. I.e. You can edge detect on top of gamma correction and vice versa.
+Hold checkbox unchecked - unchecked will edge detect/gamma correct on original image and not stack the two.
+Edge detection - The edge detection is very sensitive to gamma level so you'll need to adjust the thresholds in labelme/app.py - line 1768 (ctrl+f cv.Canny)
+TODO - add textboxes in labelme QT gui for the thresholds ^^
+Clear - clears all opencv modifications
+
+## TFRecord Script:
+
+See create_grape_tf_record_json.py for creating tfrecord from jpgs and jsons.
+
+python create_grape_tf_record_json.py [labeled images path] [tfrecord output path]
+
+You can also hardcode paths in main() of create_grape_tf_recrod_json.py instead of using the command line. Be careful as they default to my absolute paths right now
+
+\*Note: Object labels weren't specified before and the `all_classes` list was hardcoded as `['zero_class', 'object']` but that create_tf_record script builds the `all_classes` list from the json file. So if you use Grape as your label it will be  `['zero_class', 'Grape']` and the same if you use object for label.
+I think this is relevant because there is a separate file for the tf model where you specify the classes
+
+# Labelme original Readme:
+
 <h1 align="center">
   <img src="labelme/icons/icon.png"><br/>labelme
 </h1>
