@@ -4,18 +4,18 @@
 
 ### Running and stuff:
 
-Major dependecies - pyQT5 and OpenCV 2
-Usage - 
-cd into root (master) directory
-python labelme/main.py --nodata
+- Major dependecies - pyQT5 and OpenCV 2
+- Usage - 
+- cd into root (master) directory
+- python labelme/main.py --nodata
 
-(--nodata does not excludes image data from .json, more details below)
+- (--nodata does not excludes image data from .json, more details below)
 
-In label me:
-ctrl+r to draw a rectangle
-File>save will save your progress thus far in a filename.json file make sure to save it in the same directory as the images.
-Click edit polygon to duplicate bounding boxes or edit sizes
-See \*Note below about bbox labels
+- In label me:
+- ctrl+r to draw a rectangle
+- File>save will save your progress thus far in a filename.json file make sure to save it in the same directory as the images.
+- Click edit polygon to duplicate bounding boxes or edit sizes
+- See \*Note below about bbox labels
 
 ### Bloomfield Modifications:
 Hold Checkbox - holds all opencv modification. I.e. You can edge detect on top of gamma correction and vice versa.
