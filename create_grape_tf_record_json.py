@@ -15,7 +15,7 @@ class grape_data:
     def __init__(self, filepath):
 
         #filenames
-        self.filename = filepath.split('/')[-1]
+        self.filename = filepath
         self.img_filename = self.filename + '.jpg'
         self.data_filename = self.filename + '.json'
         self.path = filepath.replace(self.filename,'')
@@ -90,8 +90,8 @@ class create_tf_example(grape_data):
         self.tf_example = tf.train.Example(features = tf.train.Features(feature={
             'image/height':dataset_util.int64_feature(self.rows),
             'image/width':dataset_util.int64_feature(self.cols),
-            'image/filename': dataset_util.bytes_feature(self.img_file),
-            'image/source_id':dataset_util.bytes_feature(self.img_file),
+            'image/filename': dataset_util.bytes_feature(self.img_filename),
+            'image/source_id':dataset_util.bytes_feature(self.img_filename),
             'image/encoded':dataset_util.bytes_feature(encoded_image),
             'image/format':dataset_util.bytes_feature(self.img_format),
             'image/object/bbox/xmin':dataset_util.float_list_feature(self.xmins),
@@ -105,15 +105,18 @@ class create_tf_example(grape_data):
 def main(args):
 
     if(len(args)>1): data_path = args[1]
-    else: print("no path given for images!")#data_path = '/home/nathaniel/bloomfield/labeled_images'
+    else: print("no path given for images!") #data_path = 'sess/'
     if(len(args)>2): out_path = args[2]
-    else: print("no path given for output!")#out_path = '/home/nathaniel/bloomfield/models/research/object_detection/data/grape.record'
+    else: print("no path given for output!") #out_path = 'sess/grape.record'
 
-    files = list(set(f.split(".")[0] for f in glob(data_path + '/*')))
+    
+    files = list(set(f.split(".")[0] + '.' +  f.split(".")[1] for f in glob(data_path + '/*')))
+
+    #print(files)
 
     writer = tf.python_io.TFRecordWriter(out_path)
     for f in files:
-
+        print(f)
         temp_check = f.split('/')[-1]
         if(temp_check =='gamma_temp'): continue
         elif(temp_check =='edge_temp'): continue
